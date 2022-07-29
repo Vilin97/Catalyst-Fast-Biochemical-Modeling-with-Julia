@@ -1,0 +1,27 @@
+%%% Preparations %%%
+
+% Set input.
+lengs = logspace(1,5,9);
+
+
+%%% Benchmarks %%%
+
+%Load model.
+model = sbmlimport('../../Data/multistate_no_obs.xml');
+
+% Benchmark ODE simulations.
+benchmarks = zeros(1,length(lengs));
+for i = 1:length(benchmarks)
+    f = @() ode_sim_model(model,lengs(i));
+    benchmarks(i) = 1000*timeit(f);
+end
+
+% Saves results
+output = containers.Map;
+output('medians') = benchmarks;
+output('lengs') = lengs;
+
+fid = fopen('../../Benchmarking_results/matlab_ode_multistate.json','w');
+encodedJSON = jsonencode(output); 
+fprintf(fid, encodedJSON); 
+fclose('all'); 
