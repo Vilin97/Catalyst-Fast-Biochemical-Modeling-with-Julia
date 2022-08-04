@@ -19,7 +19,7 @@ using ReactionNetworkImporters
 using Sundials
 
 # Reads input selection.
-modelName,methodName,minT,maxT,nT = ["multisite2", "RSSACR", "1", "5", "9"]
+modelName,methodName,minT,maxT,nT = ARGS[1:5]
 jac = in("jac", ARGS)
 sparse = in("sparse", ARGS)  
 
@@ -77,12 +77,3 @@ end
 
 # Proclaims benchmark over.
 println("-----     Benchmark finished.     -----")
-
-if (modelName=="BCR") && (methodType == :Jump)
-    dprob = DiscreteProblem(model.rn,JSON.parsefile("../Data/BCR_SSA_u0.json"),(0.0,0.0),model.p); 
-else
-    dprob = DiscreteProblem(model.rn,model.u₀,(0.0,0.0),model.p); dprob = remake(dprob,u0=Int64.(dprob.u0));
-end
-dprob = remake(dprob,u0=Int64.(dprob.u0));
-jprob = JumpProblem(model.rn,dprob,solver,save_positions=(false,false))
-benchmarks = map(leng -> (jp_internal = remake(jprob,tspan=(0.0,leng)); (@benchmark solve($jp_internal,$(SSAStepper())));), lengs);
