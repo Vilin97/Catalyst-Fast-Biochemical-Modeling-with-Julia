@@ -15,6 +15,7 @@ minT = float(sys.argv[3])
 maxT = float(sys.argv[4])
 nT = int(sys.argv[5])
 num_sims = int(sys.argv[6])
+sparse = (len(sys.argv) == 8) & (sys.argv[7] == 'sparse')
 
 # Benchmarking parameters
 n = num_sims
@@ -44,6 +45,9 @@ else:
 model.actions[0].args['method'] = method
 model.actions[0].args['atol'] = 1e-12
 model.actions[0].args['rtol'] = 1e-6
+if sparse:
+    model.actions[0].args['sparse'] = 1
+
 
 # Benchmark ODE simulations.
 benchmarks = [-1.0] * len(lengs)
@@ -51,7 +55,10 @@ for i in range(0,len(lengs)):
     model.actions[0].args['t_end'] = lengs[i]
     model.actions[0].args['n_steps'] = 10
     benchmarks[i] = make_benchmark(model,n)
-serialize(benchmarks,lengs,f'bionetgen_{method[1:4]}_{modelname}')
+if sparse:
+    serialize(benchmarks,lengs,f'bionetgen_sparse_{method[1:4]}_{modelname}')
+else:
+    serialize(benchmarks,lengs,f'bionetgen_{method[1:4]}_{modelname}')
 
 
 

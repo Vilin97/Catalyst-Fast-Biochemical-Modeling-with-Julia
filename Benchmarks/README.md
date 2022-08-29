@@ -1,4 +1,4 @@
-# Benchmarks of CRN modelling tools
+# Benchamrks of CRN modelling tools
 
 Tools covered:
 
@@ -12,7 +12,7 @@ Aim is to benchmark:
 1. ODE Simulations using LSODA and CVODE.
 2. Gillespie-type SSA Simulation simulations for various methods.
 
-### Folder structure
+### Repository structure
 
 - The folder "Data" contains the model files. This includes 5 models (multistate, multisite2, egfr_net, BCR, and fceri_gamma2). Each model i presented as a .bngl file (read by BioNetGen), a .net file (read by Catalyst via ReactionNetworkImporters), and a .xml file (SBML format, reag by Copasi, Gillespy2, and Matlab). The .net and .xml files are generated from the .bngl file via BioNetGen. There also exists a "_no_obs" version of every file, where the observables are removed (these slows down some solvers). The "_no_obs" versions are used for all benchmarks.
 - The folder "Benchmark_results" contain the benchmarking output (saved in json format).
