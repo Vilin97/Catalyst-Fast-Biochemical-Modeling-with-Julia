@@ -13,6 +13,7 @@ using LSODA
 using ModelingToolkit
 using OrdinaryDiffEq
 using ReactionNetworkImporters
+using RecursiveFactorization
 using Sundials
 
 # Declares a serilization function.
@@ -48,7 +49,7 @@ if methodType == :ODE
     linsolName = ARGS[6]
     jac = in("jac", ARGS)
     sparse = in("sparse", ARGS)
-    linsolver = Dict(["NoLinSolver" => nothing, "KLU" => :KLU, "LapackDense" => :LapackDense, "GMRES" => :GMRES, "KLUFactorization" => KLUFactorization()])[linsolName]
+    linsolver = Dict(["NoLinSolver" => nothing, "KLU" => :KLU, "LapackDense" => :LapackDense, "GMRES" => :GMRES, "KLUFactorization" => KLUFactorization(), "KrylovJL_GMRES" => KrylovJL_GMRES(), "RFLUFactorization" => RFLUFactorization()])[linsolName]
 
     # Declares beginning of benchmark.
     println("\n-----     Beginning benchmarks for $(modelName) using $(methodName) with jac=$(jac),  with sparse=$(sparse), and with linsolver=$(linsolName).     -----")
@@ -60,7 +61,11 @@ if methodType == :ODE
     elseif methodName=="CVODE_BDF"
         solver = solver(linear_solver=linsolver)
     else
-        solver = solver(linsolve=linsolver)
+        if in(methodName,["TRBDF2", "KenCarp4", "QNDF", "FBDF", "Rosenbrock23"]) && in(modelName,["BCR", "fceri_gamma2"]) && !jac
+            solver = solver(linsolve=linsolver,autodiff=false)        
+        else
+            solver = solver(linsolve=linsolver)
+        end
     end
     abstol = (in(methodName,["QNDF", "FBDF"]) ? 1e-6 : 1e-12); 
     benchmarks = map(leng -> (op_interal = remake(oprob,tspan=(0.0,leng)); (@benchmark solve($op_interal,$solver,abstol=abstol,reltol=1e-6));), lengs);

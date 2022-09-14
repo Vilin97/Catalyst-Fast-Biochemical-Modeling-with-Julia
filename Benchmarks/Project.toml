@@ -1,2 +1,6 @@
 [deps]
+DiffEqDevTools = "f3b72e0c-5b89-59e1-b016-84e28bfd966d"
+ODEInterface = "54ca160b-1b9f-5127-a996-1867f4bc2a2c"
+ODEInterfaceDiffEq = "09606e27-ecf5-54fc-bb29-004bd9f985bf"
 ReactionNetworkImporters = "b4db0fb7-de2a-5028-82bf-5021f5cfa881"
+TimerOutputs = "a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f"
